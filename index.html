@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Breast Cancer Awareness</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+    header {
+      background: radial-gradient(circle at center, #007bff, #005ea2);
+      color: white;
+      padding: 20px;
+      text-align: center;
+      position: relative;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 2.5rem;
+    }
+    .appointment {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 1rem;
+    }
+    .appointment i {
+      font-size: 1.2rem;
+    }
+    .logo {
+      height: 80px;
+      position: absolute;
+      top: 20px;
+      left: 20px;
+    }
+    nav {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+    }
+    nav a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      padding: 5px 10px;
+      border-radius: 20px;
+      transition: all 0.3s ease;
+    }
+    nav a.active {
+      border: 2px solid white;
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+    nav a:hover:not(.active) {
+      border: 2px solid white;
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+    section {
+      padding: 40px 20px;
+    }
+    .quick-links {
+      background-color: #f0f0f0;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 30px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .quick-links h3 {
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+    .quick-links ul {
+      list-style: none;
+      padding: 0;
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+    .quick-links li {
+      position: relative;
+    }
+    .quick-links a {
+      color: #005ea2;
+      text-decoration: none;
+      padding: 6px 10px;
+      border-radius: 8px;
+      font-weight: bold;
+      display: inline-block;
+      transition: all 0.3s ease;
+    }
+    .quick-links a:hover::after {
+      content: " \25BC";
+      font-size: 0.7em;
+      position: absolute;
+      bottom: -1.2em;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    .quick-links a:hover {
+      background-color: #e0e0e0;
+    }
+    .image-container {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .image-container img {
+      width: 300px;
+      border-radius: 10px;
+    }
+    .enlarge-button {
+      margin-top: 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    .modal-content {
+      background-color: white;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 600px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .modal-content img {
+      width: 100%;
+      transition: transform 0.2s;
+    }
+    .close-button {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      background: transparent;
+      color: black;
+      font-size: 36px;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+    }
+    .type-section {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 40px;
+      align-items: center;
+    }
+    .type-details {
+      flex: 1;
+    }
+    .type-image-container {
+      flex: 1;
+      overflow: hidden;
+      position: relative;
+    }
+    .type-image-container img {
+      width: 100%;
+      border-radius: 10px;
+      transition: transform 0.2s;
+    }
+    .type-image-container:hover img {
+      cursor: zoom-in;
+    }
+  </style>
+  <script>
+    window.onload = () => {
+      const links = document.querySelectorAll('nav a');
+      const currentHash = window.location.hash || '#symptoms';
+      links.forEach(link => {
+        if(link.getAttribute('href') === currentHash) {
+          link.classList.add('active');
+        } else {
+          link.classList.remove('active');
+        }
+      });
+
+      const modal = document.getElementById('imageModal');
+      const enlargedImg = document.getElementById('enlargedImage');
+      let scale = 1;
+
+      document.getElementById('openModalBtn').addEventListener('click', () => {
+        modal.style.display = 'flex';
+        scale = 1;
+        enlargedImg.style.transform = `scale(${scale})`;
+      });
+
+      document.getElementById('closeModal').addEventListener('click', () => {
+        modal.style.display = 'none';
+      });
+
+      enlargedImg.addEventListener('wheel', e => {
+        e.preventDefault();
+        scale += e.deltaY * -0.001;
+        scale = Math.min(Math.max(.5, scale), 3);
+        enlargedImg.style.transform = `scale(${scale})`;
+      });
+
+      document.querySelectorAll('.type-image-container img').forEach(img => {
+        let scale = 1;
+        img.addEventListener('wheel', e => {
+          e.preventDefault();
+          scale += e.deltaY * -0.001;
+          scale = Math.min(Math.max(.5, scale), 3);
+          img.style.transform = `scale(${scale})`;
+        });
+      });
+    }
+  </script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <header>
+    <img src="logo.png" alt="Logo" class="logo">
+    <div class="appointment">
+      <i class="fas fa-phone"></i>
+      Request an Appointment
+    </div>
+    <h1>Breast Cancer</h1>
+    <nav>
+      <a href="#symptoms" class="active">Symptoms & Causes</a>
+      <a href="#diagnosis">Diagnosis & Treatment</a>
+      <a href="#care">Care at Website</a>
+    </nav>
+  </header>
+
+  <section id="symptoms">
+    <h2>Symptoms & Causes</h2>
+
+    <div class="quick-links">
+      <h3>On this page</h3>
+      <ul>
+        <li><a href="#overview">Overview</a></li>
+        <li><a href="#types">Types</a></li>
+        <li><a href="#symptoms-section">Symptoms</a></li>
+        <li><a href="#causes">Causes</a></li>
+        <li><a href="#risk">Risk factors</a></li>
+        <li><a href="#prevention">Prevention</a></li>
+      </ul>
+    </div>
+
+    <h3 id="overview">Overview</h3>
+    <div class="image-container">
+      <img src="breast-anatomy.jpg" alt="Breast anatomy">
+      <p><strong>Breast anatomy</strong></p>
+      <button id="openModalBtn" class="enlarge-button">Enlarge Image</button>
+    </div>
+    <p>Breast cancer is a kind of cancer that begins as a growth of cells in the breast tissue.</p>
+    <p>After skin cancer, breast cancer is the most common cancer diagnosed in women in the United States. But breast cancer doesn't just happen in women. Everyone is born with some breast tissue, so anyone can get breast cancer.</p>
+    <p>Breast cancer survival rates have been increasing. And the number of people dying of breast cancer is steadily going down. Much of this is due to the widespread support for breast cancer awareness and funding for research.</p>
+    <p>Advances in breast cancer screening allow healthcare professionals to diagnose breast cancer earlier. Finding the cancer earlier makes it much more likely that the cancer can be cured. Even when breast cancer can't be cured, many treatments exist to extend life. New discoveries in breast cancer research are helping healthcare professionals choose the most effective treatment plans.</p>
+
+    <div id="imageModal" class="modal">
+      <div class="modal-content">
+        <button id="closeModal" class="close-button">&times;</button>
+        <img id="enlargedImage" src="breast-anatomy.jpg" alt="Breast anatomy enlarged">
+        <h4>Breast anatomy</h4>
+        <p>Each breast contains 15 to 20 lobes of glandular tissue, arranged like the petals of a daisy. The lobes are further divided into smaller lobules that produce milk for breastfeeding. Small tubes, called ducts, conduct the milk to a reservoir that lies just beneath the nipple.</p>
+      </div>
+    </div>
+
+    <h3 id="types">Types</h3>
+    <div class="type-section">
+      <div class="type-details">
+        <h4>Angiosarcoma</h4>
+        <p>Angiosarcoma is a rare cancer that begins in the cells lining blood vessels or lymph vessels in the breast.</p>
+      </div>
+      <div class="type-image-container">
+        <img src="angiosarcoma.jpg" alt="Angiosarcoma">
+      </div>
+    </div>
+    <div class="type-section">
+      <div class="type-details">
+        <h4>Ductal carcinoma in situ (DCIS)</h4>
+        <p>DCIS is considered the earliest form of breast cancer. It’s noninvasive, meaning it hasn’t spread out of the milk duct.</p>
+      </div>
+      <div class="type-image-container">
+        <img src="dcis.jpg" alt="DCIS">
+      </div>
+    </div>
+    <div class="type-section">
+      <div class="type-details">
+        <h4>Inflammatory breast cancer</h4>
+        <p>Inflammatory breast cancer is an aggressive form of breast cancer that causes the breast to become red, swollen and tender.</p>
+      </div>
+      <div class="type-image-container">
+        <img src="inflammatory.jpg" alt="Inflammatory breast cancer">
+      </div>
+    </div>
+    <div class="type-section">
+      <div class="type-details">
+        <h4>Invasive lobular carcinoma</h4>
+        <p>This type of cancer starts in the milk-producing glands (lobules) and invades surrounding breast tissue.</p>
+      </div>
+      <div class="type-image-container">
+        <img src="invasive-lobular.jpg" alt="Invasive lobular carcinoma">
+      </div>
+    </div>
+  </section>
+  <section id="symptoms" class="py-10 px-4">
+    <h2 class="text-2xl font-semibold mb-4">Symptoms</h2>
+    <div class="relative">
+      <img
+        src="images/nipple_changes.jpg"
+        alt="Nipple changes"
+        class="w-full max-w-3xl mx-auto rounded cursor-pointer transition-transform duration-300 hover:scale-105"
+        onclick="openImageModal('images/nipple_changes.jpg', 'Nipple changes', 'Breast and nipple changes can be a sign of breast cancer. Make an appointment with a healthcare professional if you notice any changes.')"
+      />
+      <p class="text-gray-700 mt-4 max-w-3xl mx-auto">
+        Signs and symptoms of breast cancer may include:
+        <br><br>
+        • A breast lump or thickened area of skin that feels different from the surrounding tissue.<br>
+        • A nipple that looks flattened or turns inward.<br>
+        • Changes in the color of the breast skin. In people with white skin, the breast skin may look pink or red. In people with brown and Black skin, the breast skin may look darker than the other skin on the chest or it may look red or purple.<br>
+        • Change in the size, shape or appearance of a breast.<br>
+        • Changes to the skin over the breast, such as skin that looks dimpled or looks like an orange peel.<br>
+        • Peeling, scaling, crusting or flaking of the skin on the breast.
+        <br><br>
+        <strong>When to see a doctor</strong><br>
+        If you find a lump or other change in your breast, make an appointment with a doctor or other healthcare professional. Don't wait for your next mammogram to see if the change you found is breast cancer. Report any changes in your breasts even if a recent mammogram showed there was no breast cancer.
+      </p>
+    </div>
+  </section>
+  
+  <!-- Image Modal for Symptoms -->
+  <div id="imageModal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 hidden">
+    <div class="bg-white p-4 rounded-lg relative max-w-4xl w-full">
+      <button onclick="closeImageModal()" class="absolute top-2 right-4 text-3xl text-gray-700 font-bold">&times;</button>
+      <h3 id="modalTitle" class="text-xl font-semibold mb-2"></h3>
+      <img id="modalImage" src="" alt="" class="w-full max-h-[60vh] object-contain cursor-zoom-in" onwheel="zoomImage(event)" />
+      <p id="modalDescription" class="text-gray-700 mt-4"></p>
+    </div>
+  </div>
+  
+  <script>
+    function openImageModal(src, title, description) {
+      const modal = document.getElementById('imageModal');
+      document.getElementById('modalImage').src = src;
+      document.getElementById('modalTitle').innerText = title;
+      document.getElementById('modalDescription').innerText = description;
+      modal.classList.remove('hidden');
+    }
+  
+    function closeImageModal() {
+      document.getElementById('imageModal').classList.add('hidden');
+      document.getElementById('modalImage').style.transform = 'scale(1)';
+    }
+  
+    let scale = 1;
+    function zoomImage(event) {
+      event.preventDefault();
+      scale += event.deltaY * -0.001;
+      scale = Math.min(Math.max(.5, scale), 3);
+      event.target.style.transform = `scale(${scale})`;
+    }
+  </script>
+  
+</body>
+</html>
